@@ -335,6 +335,8 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-threads=8
 
 # Display
+$(call inherit-product-if-exists, vendor/qcom/opensource/commonsys/display/config/display-product-commonsys.mk)
+
 PRODUCT_PACKAGES += \
     android.hardware.graphics.mapper@3.0-impl-qti-display \
     android.hardware.graphics.mapper@4.0-impl-qti-display \
@@ -835,16 +837,17 @@ PRODUCT_SYSTEM_PROPERTIES += \
 
 # USB
 PRODUCT_PACKAGES += \
-    android.hardware.usb@1.2.vendor:64
+    android.hardware.usb@1.3-service-qti
 
 PRODUCT_PACKAGES += \
     init.qcom.usb.rc \
     init.qcom.usb.sh
 
 PRODUCT_VENDOR_PROPERTIES += \
+    vendor.usb.controller=4e00000.dwc3 \
     vendor.usb.diag.func.name=diag \
     vendor.usb.dpl.inst.name=dpl \
-    vendor.usb.qdss.inst.name=qdss \
+    vendor.usb.qdss.inst.name=qdss_sw \
     vendor.usb.rmnet.func.name=gsi \
     vendor.usb.rmnet.inst.name=rmnet \
     vendor.usb.rndis.func.name=gsi \
@@ -885,7 +888,10 @@ PRODUCT_VENDOR_PROPERTIES += \
 # Wi-Fi Display
 PRODUCT_PACKAGES += \
     libnl \
-    libwfdaac_vendor
+    libwfdaac_vendor:32
+
+PRODUCT_BOOT_JARS += \
+    WfdCommon
 
 PRODUCT_SYSTEM_PROPERTIES += \
     debug.sf.enable_hwc_vds=0 \
