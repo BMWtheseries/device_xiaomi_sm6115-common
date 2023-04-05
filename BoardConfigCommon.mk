@@ -100,6 +100,8 @@ BOARD_KERNEL_IMAGE_NAME := Image
 TARGET_KERNEL_SOURCE := kernel/xiaomi/sm6115
 TARGET_KERNEL_CONFIG := vendor/juice-perf_defconfig
 
+TARGET_KERNEL_CLANG_COMPILE := true
+
 # Metadata
 BOARD_USES_METADATA_PARTITION := true
 
