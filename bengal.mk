@@ -82,6 +82,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_platform_info_scubaidp.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_platform_info_scubaidp.xml \
     $(LOCAL_PATH)/audio/audio_platform_info_scubaqrd.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_platform_info_scubaqrd.xml \
     $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_configuration.xml \
+    $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio/audio_policy_configuration.xml \
     $(LOCAL_PATH)/audio/mixer_paths.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths.xml \
     $(LOCAL_PATH)/audio/mixer_paths_idp.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths_idp.xml \
     $(LOCAL_PATH)/audio/mixer_paths_scubaidp.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths_scubaidp.xml \
@@ -301,8 +302,7 @@ PRODUCT_SYSTEM_PROPERTIES += \
 
 # Chipset
 PRODUCT_VENDOR_PROPERTIES += \
-    ro.soc.manufacturer=QTI \
-    ro.soc.model=SM6115
+    ro.soc.manufacturer=QTI
 
 # CNE
 PRODUCT_SYSTEM_PROPERTIES += \
@@ -379,6 +379,9 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.display.mapper@4.0.vendor \
     vendor.qti.hardware.display.mapperextensions@1.0.vendor \
     vendor.qti.hardware.display.mapperextensions@1.1.vendor
+
+PRODUCT_SYSTEM_PROPERTIES += \
+    dev.pm.dyn_samplingrate=1
 
 PRODUCT_VENDOR_PROPERTIES += \
     ro.vendor.display.sensortype=2 \
@@ -472,17 +475,35 @@ PRODUCT_VENDOR_PROPERTIES += \
 
 # GPS
 PRODUCT_PACKAGES += \
-    android.hardware.gnss@1.1.vendor \
-    android.hardware.gnss@2.1.vendor
+    android.hardware.gnss@2.1-impl-qti \
+    android.hardware.gnss@2.1-service-qti \
+
+PRODUCT_PACKAGES += \
+    libbatching \
+    libgeofencing \
+    libgnss \
+    libgps.utils_headers \
+    libgps.utils \
+    libloc_core \
+    libloc_pla_headers \
+    liblocation_api_headers \
+    liblocation_api
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/gps/etc/apdr.conf:$(TARGET_COPY_OUT_VENDOR)/etc/apdr.conf \
     $(LOCAL_PATH)/gps/etc/flp.conf:$(TARGET_COPY_OUT_VENDOR)/etc/flp.conf \
+    $(LOCAL_PATH)/gps/etc/gnss_antenna_info.conf:$(TARGET_COPY_OUT_VENDOR)/etc/gnss_antenna_info.conf \
     $(LOCAL_PATH)/gps/etc/gps.conf:$(TARGET_COPY_OUT_VENDOR)/etc/gps.conf \
     $(LOCAL_PATH)/gps/etc/izat.conf:$(TARGET_COPY_OUT_VENDOR)/etc/izat.conf \
     $(LOCAL_PATH)/gps/etc/lowi.conf:$(TARGET_COPY_OUT_VENDOR)/etc/lowi.conf \
     $(LOCAL_PATH)/gps/etc/sap.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sap.conf \
     $(LOCAL_PATH)/gps/etc/xtwifi.conf:$(TARGET_COPY_OUT_VENDOR)/etc/xtwifi.conf
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/gps/etc/seccomp_policy/gnss@2.0-base.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/gnss@2.0-base.policy \
+    $(LOCAL_PATH)/gps/etc/seccomp_policy/gnss@2.0-xtra-daemon.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/gnss@2.0-xtra-daemon.policy \
+    $(LOCAL_PATH)/gps/etc/seccomp_policy/gnss@2.0-xtwifi-client.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/gnss@2.0-xtwifi-client.policy \
+    $(LOCAL_PATH)/gps/etc/seccomp_policy/gnss@2.0-xtwifi-inet-agent.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/gnss@2.0-xtwifi-inet-agent.policy
 
 # Fastboot
 PRODUCT_PACKAGES += \
@@ -499,6 +520,20 @@ PRODUCT_PACKAGES += \
     android.hidl.base@1.0.vendor \
     libhidltransport.vendor \
     libhwbinder.vendor
+
+# HWUI
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.hwui.texture_cache_size=72 \
+    ro.hwui.layer_cache_size=48 \
+    ro.hwui.r_buffer_cache_size=8 \
+    ro.hwui.path_cache_size=32 \
+    ro.hwui.gradient_cache_size=1 \
+    ro.hwui.drop_shadow_cache_size=6 \
+    ro.hwui.texture_cache_flushrate=0.4 \
+    ro.hwui.text_small_cache_width=1024 \
+    ro.hwui.text_small_cache_height=1024 \
+    ro.hwui.text_large_cache_width=2048 \
+    ro.hwui.text_large_cache_height=1024
 
 # IPACM
 PRODUCT_PACKAGES += \
@@ -594,7 +629,7 @@ PRODUCT_SYSTEM_PROPERTIES += \
 PRODUCT_VENDOR_PROPERTIES += \
     debug.stagefright.ccodec=1 \
     debug.stagefright.omx_default_rank=0 \
-    vendor.mm.enable.qcom_parser=16777215
+    vendor.mm.enable.qcom_parser=63963135
 
 # Net
 PRODUCT_PACKAGES += \
@@ -716,9 +751,16 @@ PRODUCT_PACKAGES += \
     android.hardware.power@1.3.vendor \
     android.hardware.power-service-qti
 
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/powerhint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.xml
+
 # Public libraries
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
+
+# QCA1530 detection
+PRODUCT_SYSTEM_PROPERTIES += \
+    sys.qca1530=detect
 
 # QMI
 PRODUCT_PACKAGES += \
@@ -738,7 +780,8 @@ PRODUCT_PACKAGES += \
     init.qcom.early_boot.sh \
     init.qcom.post_boot.sh \
     init.qcom.sh \
-    init.qti.dcvs.sh
+    init.qti.dcvs.sh \
+    init.qti.early_init.sh
 
 PRODUCT_PACKAGES += \
     init.qcom.factory.rc \
@@ -764,14 +807,18 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_SYSTEM_PROPERTIES += \
     DEVICE_PROVISIONED=1 \
+    persist.data.netmgrd.qos.enable=true \
     persist.vendor.data.mode=concurrent \
     persist.vendor.radio.atfwd.start=true \
     persist.vendor.radio.report_codec=1 \
     ril.subscription.types=NV,RUIM \
     rild.libpath=/vendor/lib64/libril-qc-hal-qmi.so \
-    ro.telephony.default_network=33,33 \
+    ro.telephony.default_network=22,20 \
     ro.vendor.use_data_netmgrd=true \
     telephony.lteOnCdmaDevice=1
+
+PRODUCT_SYSTEM_PROPERTIES += \
+    config.disable_rtt=true
 
 PRODUCT_VENDOR_PROPERTIES += \
     keyguard.no_require_sim=true \
@@ -790,7 +837,7 @@ PRODUCT_VENDOR_PROPERTIES += \
 
 # Sensors
 PRODUCT_PACKAGES += \
-    android.hardware.sensors@2.0-service.multihal \
+    android.hardware.sensors@2.1-service.multihal \
     libsensorndkbridge
 
 PRODUCT_COPY_FILES += \
