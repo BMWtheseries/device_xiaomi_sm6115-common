@@ -48,8 +48,7 @@ PRODUCT_PACKAGES += \
     android.hardware.audio@6.0-impl \
     android.hardware.audio.effect@6.0-impl \
     android.hardware.audio.service \
-    android.hardware.bluetooth.audio-impl \
-    android.hardware.soundtrigger@2.3-impl
+    android.hardware.bluetooth.audio-impl
 
 PRODUCT_PACKAGES += \
     audio.bluetooth.default \
@@ -86,12 +85,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/mixer_paths.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths.xml \
     $(LOCAL_PATH)/audio/mixer_paths_idp.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths_idp.xml \
     $(LOCAL_PATH)/audio/mixer_paths_scubaidp.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths_scubaidp.xml \
-    $(LOCAL_PATH)/audio/mixer_paths_scubaqrd.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths_scubaqrd.xml \
-    $(LOCAL_PATH)/audio/sound_trigger_mixer_paths.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_mixer_paths.xml \
-    $(LOCAL_PATH)/audio/sound_trigger_mixer_paths_idp.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_mixer_paths_idp.xml \
-    $(LOCAL_PATH)/audio/sound_trigger_mixer_paths_scubaidp.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_mixer_paths_scubaidp.xml \
-    $(LOCAL_PATH)/audio/sound_trigger_mixer_paths_scubaqrd.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_mixer_paths_scubaqrd.xml \
-    $(LOCAL_PATH)/audio/sound_trigger_platform_info.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_platform_info.xml
+    $(LOCAL_PATH)/audio/mixer_paths_scubaqrd.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths_scubaqrd.xml
 
 PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_volumes.xml \
@@ -177,7 +171,7 @@ PRODUCT_VENDOR_PROPERTIES += \
     vendor.audio.feature.hwdep_cal.enable=false \
     vendor.audio.feature.incall_music.enable=true \
     vendor.audio.feature.keep_alive.enable=true \
-    vendor.audio.feature.kpi_optimize.enable=true \
+    vendor.audio.feature.kpi_optimize.enable=false \
     vendor.audio.feature.maxx_audio.enable=false \
     vendor.audio.feature.multi_voice_session.enable=true \
     vendor.audio.feature.ras.enable=true \
@@ -379,6 +373,7 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.display.mapperextensions@1.1.vendor
 
 PRODUCT_SYSTEM_PROPERTIES += \
+    debug.sf.auto_latch_unsignaled=true \
     dev.pm.dyn_samplingrate=1
 
 PRODUCT_VENDOR_PROPERTIES += \
@@ -396,13 +391,13 @@ PRODUCT_VENDOR_PROPERTIES += \
 PRODUCT_VENDOR_PROPERTIES += \
     debug.egl.hw=0 \
     debug.mdpcomp.logs=0 \
+    debug.sdm.support_writeback=0 \
     debug.sf.enable_advanced_sf_phase_offset=1 \
     debug.sf.high_fps_early_gl_phase_offset_ns=-2000000 \
     debug.sf.high_fps_early_phase_offset_ns=-5000000 \
     debug.sf.high_fps_late_app_phase_offset_ns=1000000 \
     debug.sf.high_fps_late_sf_phase_offset_ns=-2000000 \
     debug.sf.hw=0 \
-    debug.sf.latch_unsignaled=1 \
     debug.sf.disable_backpressure=1 \
     debug.sf.disable_client_composition_cache=1 \
     persist.demo.hdmirotationlock=false \
@@ -596,6 +591,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/media/media_codecs_vendor_v2.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_vendor_v2.xml \
     $(LOCAL_PATH)/media/media_codecs_vendor_v3.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_vendor_v3.xml \
     $(LOCAL_PATH)/media/media_profiles.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles.xml \
+    $(LOCAL_PATH)/media/media_profiles.xml:$(TARGET_COPY_OUT_ODM)/etc/media_profiles_V1_0.xml \
     $(LOCAL_PATH)/media/media_profiles_scuba.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_scuba.xml \
     $(LOCAL_PATH)/media/media_profiles_vendor.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_vendor.xml \
     $(LOCAL_PATH)/media/system_properties.xml:$(TARGET_COPY_OUT_VENDOR)/etc/system_properties.xml
@@ -768,6 +764,13 @@ PRODUCT_PACKAGES += \
     libvndfwk_detect_jni.qti \
     libvndfwk_detect_jni.qti.vendor
 
+# QTI whitelist
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/qti_whitelist.xml:system/etc/sysconfig/qti_whitelist.xml
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/privapp-permissions-qti.xml:system/etc/permissions/privapp-permissions-qti.xml
+
 # Qualcomm System Daemon
 PRODUCT_VENDOR_PROPERTIES += \
     persist.vendor.qcomsysd.enabled=1
@@ -784,6 +787,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     init.qcom.factory.rc \
     init.qcom.rc \
+    init.recovery.qcom.rc \
     init.target.rc \
     fstab.qcom \
     ueventd.qcom.rc
@@ -810,7 +814,6 @@ PRODUCT_SYSTEM_PROPERTIES += \
     persist.vendor.radio.atfwd.start=true \
     persist.vendor.radio.report_codec=1 \
     ril.subscription.types=NV,RUIM \
-    rild.libpath=/vendor/lib64/libril-qc-hal-qmi.so \
     ro.telephony.default_network=22,20 \
     ro.vendor.use_data_netmgrd=true \
     telephony.lteOnCdmaDevice=1
@@ -831,7 +834,8 @@ PRODUCT_VENDOR_PROPERTIES += \
     persist.vendor.radio.procedure_bytes=SKIP \
     persist.vendor.radio.rat_on=combine \
     persist.vendor.radio.sib16_support=1 \
-    ro.com.android.dataroaming=true
+    ro.com.android.dataroaming=true \
+    vendor.rild.libpath=/vendor/lib64/libril-qc-hal-qmi.so
 
 # Sensors
 PRODUCT_PACKAGES += \
@@ -851,10 +855,6 @@ PRODUCT_VENDOR_PROPERTIES += \
     persist.vendor.sensors.hal_trigger_ssr=false \
     persist.vendor.sensors.support_direct_channel=false
 
-# Shutdown
-PRODUCT_VENDOR_PROPERTIES += \
-    sys.vendor.shutdown.waittime=500
-
 # SSR
 PRODUCT_SYSTEM_PROPERTIES += \
     persist.vendor.ssr.enable_ramdumps=1
@@ -873,12 +873,22 @@ PRODUCT_PACKAGES += \
 PRODUCT_BOOT_JARS += \
     telephony-ext
 
+PRODUCT_SYSTEM_PROPERTIES += \
+    persist.vendor.ims.disableADBLogs=1 \
+    persist.vendor.ims.disableDebugLogs=1 \
+    persist.vendor.ims.disableIMSLogs=1 \
+    persist.vendor.ims.disableQXDMLogs=1
+
 PRODUCT_VENDOR_PROPERTIES += \
     ro.telephony.iwlan_operation_mode=legacy
 
 # Time-services
 PRODUCT_SYSTEM_PROPERTIES += \
     persist.timed.enable=true
+
+# Thermal
+PRODUCT_VENDOR_PROPERTIES += \
+    vendor.sys.thermal.data.path=/data/vendor/thermal/
 
 # USB
 PRODUCT_PACKAGES += \
@@ -902,6 +912,11 @@ PRODUCT_VENDOR_PROPERTIES += \
 PRODUCT_VENDOR_PROPERTIES += \
     persist.sys.oem.otg_support=true
 
+ifneq ($(TARGET_BUILD_VARIANT),user)
+PRODUCT_VENDOR_PROPERTIES += \
+    persist.vendor.usb.config=mtp,adb
+endif
+
 # Vibrator
 PRODUCT_PACKAGES += \
     vendor.qti.hardware.vibrator.service
@@ -916,6 +931,7 @@ PRODUCT_PACKAGES += \
     libwpa_client \
     libwifi-hal-ctrl \
     libwifi-hal-qcom \
+    TetheringConfigOverlay \
     vendor.qti.hardware.wifi.hostapd@1.2.vendor \
     vendor.qti.hardware.wifi.supplicant@2.1.vendor \
     WifiResCommon \
